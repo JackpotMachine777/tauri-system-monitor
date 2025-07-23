@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri System Monitor</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <!-- OS -->
+    <section id="OS">
+      <h2>System</h2>
+      <div id="hostname">Loading...</div>
+      <div id="os-name"></div>
+      <div id="kernel-version"></div>
+    </section>
+
+    <!-- CPU -->
+    <section id="cpu">
+      <h2 id="cpu-name">CPU</h2>
+      <div id="cpu-usage"></div>
+      <div id="cpu-temp"></div>
+    </section>
+
+    <!-- RAM -->
+    <section id="ram">
+      <h2>RAM</h2>
+      <div id="total-ram"></div>
+      <div id="used-ram"></div>
+    </section>
+
+    <!-- GPU -->
+    <section id="gpu">
+      <h2 id="gpu-name"></h2>
+      <div id="gpu-temp"></div>
+      <div id="gpu-usage"></div>
+      <div id="vram-total"></div>
+      <div id="vram-usage"></div>
+    </section>
+    
+    <section id="disks">
+      <h2>Disks</h2>
+      <div class="disk"></div>
+      <div class="disk"></div>
+      <div class="disk"></div>
+      <div class="disk"></div>
+      <div class="disk"></div>
+    </section>
+  </body>
+</html>
