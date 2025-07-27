@@ -22,7 +22,7 @@ It shows real-time info like CPU, RAM, GPU, disk usage and system stats.
 ## 📦 Build & Run
 
 ```bash
-# install dependencies (if frontend uses npm/yarn)
+# install dependencies
 npm install
 
 # dev mode
@@ -30,3 +30,8 @@ npm run tauri dev
 
 # build release
 NO_STRIP=true npm run tauri build --release
+```
+
+## 🧪 Tested on
+This application has been tested on:
+- 🐧 Arch Linux (Hyprland environment)
