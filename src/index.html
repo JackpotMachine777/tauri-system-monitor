@@ -11,15 +11,18 @@
   <body>
     <!-- OS -->
     <section id="OS">
-      <h2>System</h2>
-      <div id="hostname">Loading...</div>
-      <div id="os-name"></div>
-      <div id="kernel-version"></div>
+        <img src="" alt="" id="system-logo">
+        <div id="system-text">
+          <h2>System</h2>
+          <div id="hostname"></div>
+          <div id="os-name"></div>
+          <div id="kernel-version"></div>
+        </div>
     </section>
 
     <!-- CPU -->
     <section id="cpu">
-      <h2 id="cpu-name">CPU</h2>
+      <h2 id="cpu-name"></h2>
       <div id="cpu-usage"></div>
       <div id="cpu-temp"></div>
     </section>
@@ -39,7 +42,14 @@
       <div id="vram-total"></div>
       <div id="vram-usage"></div>
     </section>
+
+    <section id="network">
+      <h2 id="network-name"></h2>
+      <div id="transmitted"></div>
+      <div id="received"></div>
+    </section>
     
+    <!-- DISKS -->
     <section id="disks">
       <h2>Disks</h2>
       <div class="disk"></div>
