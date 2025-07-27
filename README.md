@@ -11,11 +11,12 @@ It shows real-time info like CPU, RAM, GPU, disk usage and system stats.
 - Disk space per partition
 - Temperatures (if supported)
 - System info
+- Network stats (Download and upload)
 - Auto-refresh every 1 second
 
 ## 🛠️ Technologies
 
-- Frontend: HTML/CSS/JS (or React/Vue/Svelte – update if needed)
+- Frontend: HTML/CSS/JS
 - Backend: Rust + Tauri
 - System stats via Rust crates (e.g. `sysinfo`, etc.)
 
