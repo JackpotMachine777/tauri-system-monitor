@@ -30,3 +30,7 @@ npm run tauri dev
 
 # build release
 NO_STRIP=true npm run tauri build --release
+
+## 🧪 Tested on
+This application has been tested on:
+- 🐧 Arch Linux (Hyprland environment)
