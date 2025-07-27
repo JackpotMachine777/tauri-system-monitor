@@ -22,7 +22,7 @@ It shows real-time info like CPU, RAM, GPU, disk usage and system stats.
 ## 📦 Build & Run
 
 ```bash
-# install dependencies (if frontend uses npm/yarn)
+# install dependencies
 npm install
 
 # dev mode
