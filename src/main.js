@@ -105,13 +105,9 @@ async function systemStats() {
     transmitted.textContent = `Upload: ${(stats.transmitted / (1024 ** 2)).toFixed(2)} MB/s`;
     received.textContent = `Download: ${(stats.received / (1024 ** 2)).toFixed(2)} MB/s`;
   }
-  else if(stats.transmitted >= 1024){
+  else{
     transmitted.textContent = `Upload: ${(stats.transmitted / 1024).toFixed(2)} KB/s`;
     received.textContent = `Download: ${(stats.received / 1024).toFixed(2)} KB/s`;
-  } 
-  else{
-    transmitted.textContent = `Upload: ${(stats.transmitted)} B/s`;
-    received.textContent = `Download: ${(stats.received)} B/s`;
   }
 }
 
