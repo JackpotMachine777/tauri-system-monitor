@@ -24,7 +24,7 @@ const vramUsage = document.querySelector("#vram-usage");
 const vramTotal = document.querySelector("#vram-total");
 
 // DISKS //
-const disk = Array.from(document.querySelectorAll(".disk"));
+const diskContainer = document.querySelector("#disks");
 
 // NETWORK //
 const networkName = document.querySelector("#network-name");
@@ -78,12 +78,18 @@ async function systemStats() {
   usedRam.textContent = `RAM Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
 
   // Disks Stats//
-  disk.forEach((el, i) => {
-    if(stats.disks[i]) {
-      el.innerHTML = `${stats.disks[i].diskname} <br>
-        Total space: ${(stats.disks[i].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br>
-        Available space: ${(stats.disks[i].available_space / 1024 / 1024 / 1024).toFixed(0)} GB`;
-    }
+  diskContainer.innerHTML = "";
+  stats.disks
+  .filter(disk => disk.diskname !== "tauri-system-monitor.AppImage")
+  .forEach(disk => {
+    const el = document.createElement("div");
+    el.classList.add("disk");
+    el.innerHTML = `${disk.diskname} <br>
+      Total space: ${(disk.total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br>
+      Available space: ${(disk.available_space / 1024 / 1024 / 1024).toFixed(0)} GB`;
+    
+
+    diskContainer.append(el);
   });
 
   // Network Stats //
