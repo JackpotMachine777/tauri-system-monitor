@@ -1,3 +1,6 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use serde::Serialize;
 use std::{process::Command, thread, time};
 use sysinfo::{
@@ -5,9 +8,7 @@ use sysinfo::{
     Disks, 
     System,
     Networks,
-    NetworkData
 };
-use tauri::command;
 
 // System Data structure (from sysinfo) //
 #[derive(Serialize)]
@@ -34,12 +35,12 @@ struct SystemStats {
 // Disks Data structure //
 #[derive(Serialize)]
 struct DiskInfo {
-    name: String,
+    diskname: String,
     total_space: u64,
     available_space: u64,
 }
 
-#[command]
+#[tauri::command]
 fn get_system_stats() -> SystemStats {
     // New system processes list //
     let mut sys = System::new_all();
@@ -77,12 +78,12 @@ fn get_system_stats() -> SystemStats {
     let mut disks_vec: Vec<DiskInfo> = Vec::new();
 
     for disk in sys_disks.list() {
-        let name = disk.name().to_string_lossy().into_owned();
+        let diskname = disk.name().to_string_lossy().into_owned();
         let total_space = disk.total_space();
         let available_space = disk.available_space();
 
         disks_vec.push(DiskInfo {
-            name,
+            diskname,
             total_space,
             available_space,
         });
@@ -127,25 +128,28 @@ struct GpuInfo {
 // GPU Info //
 #[tauri::command]
 fn get_gpu_info() -> Option<GpuInfo> {
-    let output = Command::new("nvidia-smi")
+    // NVIDIA //
+    if let Ok(output) = Command::new("nvidia-smi")
         .args([
             "--query-gpu=name,temperature.gpu,utilization.gpu,memory.used,memory.total",
             "--format=csv,noheader,nounits",
         ])
         .output()
-        .ok()?;
+    {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let line = stdout.lines().next()?;
+        let parts: Vec<&str> = line.trim().split(',').map(|s| s.trim()).collect();
 
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let line = stdout.lines().next()?;
-    let parts: Vec<&str> = line.trim().split(',').map(|s| s.trim()).collect();
+        return Some(GpuInfo {
+            name: parts[0].to_string(),
+            temp: parts[1].parse().ok()?,
+            usage: parts[2].parse().ok()?,
+            memory_used: parts[3].parse().ok()?,
+            memory_total: parts[4].parse().ok()?,
+        })
+    }
 
-    Some(GpuInfo {
-        name: parts[0].to_string(),
-        temp: parts[1].parse().ok()?,
-        usage: parts[2].parse().ok()?,
-        memory_used: parts[3].parse().ok()?,
-        memory_total: parts[4].parse().ok()?,
-    })
+    None
 }
 
 fn main() {

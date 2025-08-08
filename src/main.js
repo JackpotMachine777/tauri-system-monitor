@@ -31,8 +31,14 @@ const networkName = document.querySelector("#network-name");
 const transmitted = document.querySelector("#transmitted");
 const received = document.querySelector("#received");
 
+function formatBytes(bytes){
+  if(bytes >= 1024 ** 3) return(`${(bytes / (1024**3)).toFixed(2)} GB/s`);
+  else if(bytes >= 1024 ** 2) return(`${(bytes / (1024**2)).toFixed(2)} MB/s`);
+  else return(`${(bytes / (1024)).toFixed(2)} KB/s`);
+}
+
+// System stats function //
 async function systemStats() {
-  // Getting stats from backend (main.rs) //
   const stats = await invoke('get_system_stats'); 
 
   // OS Stats //
@@ -47,12 +53,9 @@ async function systemStats() {
   } 
   else if(stats.os_name.includes("Ubuntu")) {
     systemLogo.src = "/assets/ubuntu.png";
-  } 
-  else if(stats.os_name.includes("Windows 10")) {
-    systemLogo.src = "/assets/win10.png";
-  } 
-  else if(stats.os_name.includes("Windows 11")) {
-    systemLogo.src = "/assets/win11.png";
+  }  
+  else if(stats.os_name.includes("Windows")) {
+    systemLogo.src = "/assets/windows.png";
   }
   else if(stats.os_name.includes("Fedora")){
     systemLogo.src = "/assets/fedora.png";
@@ -75,44 +78,22 @@ async function systemStats() {
   usedRam.textContent = `RAM Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
 
   // Disks Stats//
-  disk[0].innerHTML = `${stats.disks[0].name} <br> 
-  Total space: ${(stats.disks[0].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br> 
-  Available space: ${(stats.disks[0].available_space.toFixed(0) / 1024 / 1024 / 1024).toFixed(0)} GB`;
-
-  disk[1].innerHTML = `${stats.disks[2].name} <br> 
-  Total space: ${(stats.disks[2].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br> 
-  Available space: ${(stats.disks[2].available_space.toFixed(0) / 1024 / 1024 / 1024).toFixed(0)} GB`;
-
-  disk[2].innerHTML = `${stats.disks[2].name} <br> 
-  Total space: ${(stats.disks[2].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br> 
-  Available space: ${(stats.disks[2].available_space.toFixed(0) / 1024 / 1024 / 1024).toFixed(0)} GB`;
-
-  disk[3].innerHTML = `${stats.disks[3].name} <br> 
-  Total space: ${(stats.disks[3].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br> 
-  Available space: ${(stats.disks[3].available_space.toFixed(0) / 1024 / 1024 / 1024).toFixed(0)} GB`;
-
-  disk[4].innerHTML = `${stats.disks[4].name} <br> 
-  Total space: ${(stats.disks[4].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br> 
-  Available space: ${(stats.disks[4].available_space.toFixed(0) / 1024 / 1024 / 1024).toFixed(0)} GB`;
+  disk.forEach((el, i) => {
+    if(stats.disks[i]) {
+      el.innerHTML = `${stats.disks[i].diskname} <br>
+        Total space: ${(stats.disks[i].total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br>
+        Available space: ${(stats.disks[i].available_space / 1024 / 1024 / 1024).toFixed(0)} GB`;
+    }
+  });
 
   // Network Stats //
   networkName.textContent = `Network Interface: ${stats.name}`;
-  if(stats.transmitted >= 1024 ** 3){
-    transmitted.textContent = `Upload: ${(stats.transmitted / (1024 ** 3)).toFixed(2)} GB/s`;
-    received.textContent = `Download: ${(stats.received / (1024 ** 3)).toFixed(2)} GB/s`;
-  }
-  else if(stats.transmitted >= 1024 ** 2){
-    transmitted.textContent = `Upload: ${(stats.transmitted / (1024 ** 2)).toFixed(2)} MB/s`;
-    received.textContent = `Download: ${(stats.received / (1024 ** 2)).toFixed(2)} MB/s`;
-  }
-  else{
-    transmitted.textContent = `Upload: ${(stats.transmitted / 1024).toFixed(2)} KB/s`;
-    received.textContent = `Download: ${(stats.received / 1024).toFixed(2)} KB/s`;
-  }
+  transmitted.textContent = `Upload: ${formatBytes(stats.transmitted)}`;
+  received.textContent = `Download: ${formatBytes(stats.received)}`;
 }
 
+// GPU Stats function //
 async function gpuStats() {
-  // Getting GPU stats from backend (main.rs) //
   const gpu = await invoke('get_gpu_info'); 
 
   // GPU //
