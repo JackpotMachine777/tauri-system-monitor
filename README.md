@@ -8,7 +8,7 @@ Displays real-time info like CPU, RAM, GPU, disks, temperatures and network usag
 ## 🚀 Features
 
 - 🧠 CPU usage + model
-- 🎮 GPU usage + model
+- 🎮 GPU usage + model (Only NVIDIA for now)
 - 🧮 RAM (used / total)
 - 💾 Disk space per partition
 - 🌡️ Temperatures (if supported)
