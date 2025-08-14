@@ -73,7 +73,7 @@ h2 {
 }
 
 #cpu-usage, #cpu-temp, #gpu-usage, #gpu-temp, #vram-total, #vram-usage,
-#total-ram, #used-ram, #transmitted, #received {
+#total-ram, #used-ram, #cpu-name, #gpu-name, #network-name, #transmitted, #received {
   font-weight: 600;
   color: #bb86fc;
 }

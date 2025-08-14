@@ -69,16 +69,19 @@ async function systemStats() {
   kernelVersion.textContent = `Kernel version: ${stats.kernel_version}`;
 
   // CPU Stats //
-  cpuName.textContent = `${stats.cpu_brand}`;
-  cpuUsage.textContent = `CPU Usage: ${stats.cpu_usage.toFixed(0)}%`;
-  cpuTemp.textContent = `CPU Temp: ${stats.cpu_temp.toFixed(0)}°C`
+  cpuName.textContent = `Model: ${stats.cpu_brand}`;
+  cpuUsage.textContent = `Usage: ${stats.cpu_usage.toFixed(0)}%`;
+  cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
 
   // RAM Stats //
-  totalRam.textContent = `Total RAM: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
-  usedRam.textContent = `RAM Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
+  totalRam.textContent = `Total: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
+  usedRam.textContent = `Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
 
   // Disks Stats//
   diskContainer.innerHTML = "";
+  const disksTitle = document.createElement("h2");
+  disksTitle.textContent = "Disks";
+  diskContainer.append(disksTitle);
   stats.disks
   .filter(disk => disk.diskname !== "tauri-system-monitor.AppImage")
   .forEach(disk => {
@@ -88,12 +91,12 @@ async function systemStats() {
       Total space: ${(disk.total_space / 1024 / 1024 / 1024).toFixed(0)} GB <br>
       Available space: ${(disk.available_space / 1024 / 1024 / 1024).toFixed(0)} GB`;
     
-
+      
     diskContainer.append(el);
   });
 
   // Network Stats //
-  networkName.textContent = `Network Interface: ${stats.name}`;
+  networkName.textContent = `Name: ${stats.name}`;
   transmitted.textContent = `Upload: ${formatBytes(stats.transmitted)}`;
   received.textContent = `Download: ${formatBytes(stats.received)}`;
 }
@@ -103,9 +106,9 @@ async function gpuStats() {
   const gpu = await invoke('get_gpu_info'); 
 
   // GPU //
-  gpuName.textContent = `${gpu.name}`;
-  gpuTemp.textContent = `GPU Temp: ${gpu.temp}°C`;
-  gpuUsage.textContent = `GPU Usage: ${gpu.usage}%`;
+  gpuName.textContent = `Model: ${gpu.name}`;
+  gpuTemp.textContent = `Temp: ${gpu.temp}°C`;
+  gpuUsage.textContent = `Usage: ${gpu.usage}%`;
 
   // VRAM //
   vramTotal.textContent = `Total VRAM: ${gpu.memory_total} MB`;
