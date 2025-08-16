@@ -22,6 +22,10 @@ struct SystemStats {
     used_memory: u64,
     // OS //
     os_name: Option<String>,
+    os_version: Option<String>,
+    os_arch: Option<String>,
+    uptime: u64,
+
     kernel_version: Option<String>,
     hostname: Option<String>,
     // DISKS //
@@ -70,6 +74,12 @@ fn get_system_stats() -> SystemStats {
 
     // OS Info: //
     let os_name = System::name();
+    let os_version = System::os_version();
+    let os_arch = System::cpu_arch();
+
+    let uptime = System::uptime();
+    let boot_time = System::boot_time();
+
     let kernel_version = System::kernel_version();
     let hostname = System::host_name();
 
@@ -103,11 +113,18 @@ fn get_system_stats() -> SystemStats {
         cpu_brand: Some(cpu_brand),
         cpu_usage,
         cpu_temp,
+
         total_memory,
         used_memory,
+
         os_name,
+        os_version,
+        os_arch: Some(os_arch),
+        uptime,
+
         kernel_version,
         hostname,
+
         disks: disks_vec,
         name: name.to_string(),
         received,

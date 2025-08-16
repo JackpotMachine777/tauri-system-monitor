@@ -4,7 +4,14 @@ const { invoke } = window.__TAURI__.core;
 // OS //
 const systemLogo = document.querySelector("#system-logo");
 const hostname = document.querySelector("#hostname");
+
 const osName = document.querySelector("#os-name");
+const osVer = document.querySelector("#os-version");
+const osArch = document.querySelector("#os-arch");
+
+const uptime = document.querySelector("#uptime");
+const bootTime = document.querySelector("#boot-time");
+
 const kernelVersion = document.querySelector("#kernel-version");
 
 // CPU //
@@ -37,6 +44,18 @@ function formatBytes(bytes){
   else return(`${(bytes / (1024)).toFixed(2)} KB/s`);
 }
 
+function formatTime(seconds){
+  const days = Math.floor(seconds / 86400);
+  const hrs = Math.floor((seconds % 86400) / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (!mins) return `${secs}s`;
+  if (!hrs && mins) return `${mins}m ${secs}s`;
+  if (!days && hrs) return `${hrs}h ${mins}m ${secs}s`;
+  else return `${days}d ${hrs}h ${mins}m ${secs}s`; 
+}
+
 // System stats function //
 async function systemStats() {
   const stats = await invoke('get_system_stats'); 
@@ -65,7 +84,12 @@ async function systemStats() {
   }
 
   hostname.textContent = `User: ${stats.hostname}`;
+
   osName.textContent = `Operating System: ${stats.os_name}`;
+  osVer.textContent = `OS Version: ${stats.os_version}`;
+  osArch.textContent = `OS Architecture: ${stats.os_arch}`;
+  uptime.textContent = `Uptime: ${formatTime(stats.uptime)}`;
+
   kernelVersion.textContent = `Kernel version: ${stats.kernel_version}`;
 
   // CPU Stats //
