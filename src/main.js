@@ -8,9 +8,7 @@ const hostname = document.querySelector("#hostname");
 const osName = document.querySelector("#os-name");
 const osVer = document.querySelector("#os-version");
 const osArch = document.querySelector("#os-arch");
-
 const uptime = document.querySelector("#uptime");
-const bootTime = document.querySelector("#boot-time");
 
 const kernelVersion = document.querySelector("#kernel-version");
 
