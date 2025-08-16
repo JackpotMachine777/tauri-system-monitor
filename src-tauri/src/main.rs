@@ -76,9 +76,7 @@ fn get_system_stats() -> SystemStats {
     let os_name = System::name();
     let os_version = System::os_version();
     let os_arch = System::cpu_arch();
-
     let uptime = System::uptime();
-    let boot_time = System::boot_time();
 
     let kernel_version = System::kernel_version();
     let hostname = System::host_name();
