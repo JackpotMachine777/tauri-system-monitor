@@ -16,6 +16,7 @@ const kernelVersion = document.querySelector("#kernel-version");
 const cpuName = document.querySelector("#cpu-name");
 const cpuUsage = document.querySelector("#cpu-usage");
 const cpuTemp = document.querySelector("#cpu-temp");
+const cpuFreq = document.querySelector("#cpu-freq");
 
 // RAM //
 const totalRam = document.querySelector("#total-ram");
@@ -25,11 +26,12 @@ const usedRam = document.querySelector("#used-ram");
 const gpuName = document.querySelector("#gpu-name");
 const gpuTemp = document.querySelector("#gpu-temp");
 const gpuUsage = document.querySelector("#gpu-usage");
+const gpuPower = document.querySelector("#gpu-power");
 const vramUsage = document.querySelector("#vram-usage");
-const vramTotal = document.querySelector("#vram-total");
+const mhzUsed = document.querySelector("#mhz-used");
 
 // DISKS //
-const diskContainer = document.querySelector("#disks");
+const diskContainer = document.querySelector("#disks-wrapper");
 
 // NETWORK //
 const networkName = document.querySelector("#network-name");
@@ -52,6 +54,11 @@ function formatTime(seconds){
   if (!hrs && mins) return `${mins}m ${secs}s`;
   if (!days && hrs) return `${hrs}h ${mins}m ${secs}s`;
   else return `${days}d ${hrs}h ${mins}m ${secs}s`; 
+}
+
+function formatClocks(mhz, type){
+  if(type === "cpu") return `${(mhz / 1000).toFixed(1)} GHz`;
+  else return `${mhz} MHz`;
 }
 
 // System stats function //
@@ -94,6 +101,7 @@ async function systemStats() {
   cpuName.textContent = `Model: ${stats.cpu_brand}`;
   cpuUsage.textContent = `Usage: ${stats.cpu_usage.toFixed(0)}%`;
   cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
+  cpuFreq.textContent = `Frequency: ${formatClocks(stats.cpu_freq, "cpu")}`;
 
   // RAM Stats //
   totalRam.textContent = `Total: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
@@ -101,9 +109,6 @@ async function systemStats() {
 
   // Disks Stats//
   diskContainer.innerHTML = "";
-  const disksTitle = document.createElement("h2");
-  disksTitle.textContent = "Disks";
-  diskContainer.append(disksTitle);
   stats.disks
   .filter(disk => disk.diskname !== "tauri-system-monitor.AppImage")
   .forEach(disk => {
@@ -131,10 +136,11 @@ async function gpuStats() {
   gpuName.textContent = `Model: ${gpu.name}`;
   gpuTemp.textContent = `Temp: ${gpu.temp}°C`;
   gpuUsage.textContent = `Usage: ${gpu.usage}%`;
+  gpuPower.textContent = `Power draw: ${(gpu.power_draw).toFixed(0)} W / ${gpu.power_limit} W`
 
-  // VRAM //
-  vramTotal.textContent = `Total VRAM: ${gpu.memory_total} MB`;
-  vramUsage.textContent = `VRAM Usage: ${gpu.memory_used} MB`;
+  vramUsage.textContent = `VRAM Usage: ${gpu.memory_used} MB / ${gpu.memory_total} MB`;
+
+  mhzUsed.textContent = `Frequency: ${formatClocks(gpu.mhz_used, "gpu")} / ${formatClocks(gpu.mhz_total, "gpu")}`;
 }
 
 setInterval(()=>{

@@ -7,6 +7,8 @@ use sysinfo::{
     Components, 
     Disks, 
     System,
+    RefreshKind,
+    CpuRefreshKind,
     Networks,
 };
 
@@ -17,6 +19,7 @@ struct SystemStats {
     cpu_brand: Option<String>,
     cpu_usage: f32,
     cpu_temp: Option<f32>,
+    cpu_freq: u64,
     // RAM //
     total_memory: u64,
     used_memory: u64,
@@ -25,7 +28,6 @@ struct SystemStats {
     os_version: Option<String>,
     os_arch: Option<String>,
     uptime: u64,
-
     kernel_version: Option<String>,
     hostname: Option<String>,
     // DISKS //
@@ -47,7 +49,7 @@ struct DiskInfo {
 #[tauri::command]
 fn get_system_stats() -> SystemStats {
     // New system processes list //
-    let mut sys = System::new_all();
+    let mut sys = System::new_with_specifics(RefreshKind::nothing().with_cpu(CpuRefreshKind::everything()));
     let mut networks = Networks::new_with_refreshed_list();
     // Updating info about system //
     std::thread::sleep(sysinfo::MINIMUM_CPU_UPDATE_INTERVAL);
@@ -67,6 +69,8 @@ fn get_system_stats() -> SystemStats {
         .find(|c| c.label() == "k10temp Tctl")
         .map(|c| c.temperature())
         .unwrap_or(Some(0.0));
+    
+    let cpu_freq = sys.cpus()[0].frequency();
 
     // RAM Info: //
     let total_memory = sys.total_memory();
@@ -111,6 +115,7 @@ fn get_system_stats() -> SystemStats {
         cpu_brand: Some(cpu_brand),
         cpu_usage,
         cpu_temp,
+        cpu_freq,
 
         total_memory,
         used_memory,
@@ -138,6 +143,10 @@ struct GpuInfo {
     usage: u32,
     memory_used: u32,
     memory_total: u32,
+    power_draw: f32,
+    power_limit: f32,
+    mhz_used: u32,
+    mhz_total: u32,
 }
 
 // GPU Info //
@@ -146,7 +155,7 @@ fn get_gpu_info() -> Option<GpuInfo> {
     // NVIDIA //
     if let Ok(output) = Command::new("nvidia-smi")
         .args([
-            "--query-gpu=name,temperature.gpu,utilization.gpu,memory.used,memory.total",
+            "--query-gpu=name,temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw,power.limit,clocks.current.graphics,clocks.max.graphics",
             "--format=csv,noheader,nounits",
         ])
         .output()
@@ -161,6 +170,10 @@ fn get_gpu_info() -> Option<GpuInfo> {
             usage: parts[2].parse().ok()?,
             memory_used: parts[3].parse().ok()?,
             memory_total: parts[4].parse().ok()?,
+            power_draw: parts[5].parse().ok()?,
+            power_limit: parts[6].parse().ok()?,
+            mhz_used: parts[7].parse().ok()?,
+            mhz_total: parts[8].parse().ok()?,
         })
     }
 
