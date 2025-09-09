@@ -165,15 +165,15 @@ fn get_gpu_info() -> Option<GpuInfo> {
         let parts: Vec<&str> = line.trim().split(',').map(|s| s.trim()).collect();
 
         return Some(GpuInfo {
-            name: parts[0].to_string(),
-            temp: parts[1].parse().ok()?,
-            usage: parts[2].parse().ok()?,
-            memory_used: parts[3].parse().ok()?,
-            memory_total: parts[4].parse().ok()?,
-            power_draw: parts[5].parse().ok()?,
-            power_limit: parts[6].parse().ok()?,
-            mhz_used: parts[7].parse().ok()?,
-            mhz_total: parts[8].parse().ok()?,
+            name: parts.get(0)?.to_string(),
+            temp: parts.get(1)?.parse().ok()?,
+            usage: parts.get(2)?.parse().ok()?,
+            memory_used: parts.get(3)?.parse().ok()?,
+            memory_total: parts.get(4)?.parse().ok()?,
+            power_draw: parts.get(5)?.parse().ok()?,
+            power_limit: parts.get(6)?.parse().ok()?,
+            mhz_used: parts.get(7)?.parse().ok()?,
+            mhz_total: parts.get(8)?.parse().ok()?,
         })
     }
 
