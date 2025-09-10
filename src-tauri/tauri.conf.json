@@ -24,7 +24,8 @@
       "endpoints": [],
       "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDkwOTNDRDQ4OUI3RUI4QjIKUldTeXVINmJTTTJUa0FIaFVkWG9BZElIcm1vR3JMTktoZDM2Zmt0SVg3KzJ6S1NURDlPYjZmR1EK",
-      "windows": {}
+      "windows": {},
+      "permissions": ["core:app:default"]
     }
   },
   "bundle": {
