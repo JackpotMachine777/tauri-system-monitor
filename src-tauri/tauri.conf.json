@@ -30,7 +30,6 @@
   },
   "bundle": {
     "active": true,
-    
     "targets": "all",
     "icon": [
       "icons/sysmon.png"
