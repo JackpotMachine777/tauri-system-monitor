@@ -30,8 +30,8 @@
   },
   "bundle": {
     "active": true,
-    "createUpdaterArtifacts": "v1Compatible",
-    "targets": ["app"],
+    
+    "targets": "all",
     "icon": [
       "icons/sysmon.png"
     ]
