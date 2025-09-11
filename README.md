@@ -59,6 +59,9 @@ NO_STRIP=true npm run tauri build --release
 
 #!/bin/bash
 WEBKIT_DISABLE_DMABUF_RENDERER=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 ./tauri-system-monitor.AppImage
+
+## Save file then in terminal add this command
+chmod +x run.sh
 ```
 
 ---
