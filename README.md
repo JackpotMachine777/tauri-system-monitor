@@ -27,16 +27,38 @@ Displays real-time info like CPU, RAM, GPU, disks, temperatures and network usag
 ---
 
 ## 📦 Build & Run
+1. AUR installation:
+```
+yay -S tauri-system-monitor
+```
 
+---
+
+2. Manual installation:
 ```bash
-# install dependencies
+## Install dependencies
+
+# Runtime dependencies
+sudo pacman -S glibc webkit2gtk gtk3 libayatana-appindicator hicolor-icon-theme linuxdeploy 
+
+# Build dependencies
+sudo pacman -S nodejs npm rust pkg-config gcc make git clang lld llvm
+
+git clone https://github.com/JackpotMachine777/tauri-system-monitor.git
+cd tauri-system-monitor
+
 npm install
 
-# dev mode
+## Dev mode
 npm run tauri dev
 
-# build release
+## Build release
 NO_STRIP=true npm run tauri build --release
+
+## To run executable you can make .sh script
+
+#!/bin/bash
+WEBKIT_DISABLE_DMABUF_RENDERER=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 ./tauri-system-monitor.AppImage
 ```
 
 ---
