@@ -11,6 +11,7 @@ use sysinfo::{
     CpuRefreshKind,
     Networks,
 };
+use tauri::{Manager, WebviewWindowBuilder, WebviewUrl};
 
 // System Data structure (from sysinfo) //
 #[derive(Serialize)]
@@ -149,6 +150,29 @@ struct GpuInfo {
     mhz_total: u32,
 }
 
+// Stress test (XD) //
+#[tauri::command]
+async fn open_doom_window(app: tauri::AppHandle) -> tauri::Result<()> {
+    if let Some(window) = app.get_webview_window("doom") {
+        window.show()?;
+        window.set_focus()?;
+        return Ok(());
+    }
+
+    WebviewWindowBuilder::new(
+        &app,
+        "doom",
+        WebviewUrl::App("stress.html".into())
+    )
+    .title("DOOM")
+    .inner_size(800.0, 600.0)
+    .build()?;
+
+    Ok(())
+}
+
+
+
 // GPU Info //
 #[tauri::command]
 fn get_gpu_info() -> Option<GpuInfo> {
@@ -183,7 +207,7 @@ fn get_gpu_info() -> Option<GpuInfo> {
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info])
+        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info, open_doom_window])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

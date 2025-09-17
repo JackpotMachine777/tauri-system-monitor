@@ -10,12 +10,46 @@ body {
   justify-content: center;
 }
 
-section#OS {
+/* section#OS {
   flex: 1 1 250px;
   max-width: none;
   flex-direction: row; 
   gap: 1rem;
   padding: 5px 5px;
+} */
+
+section#OS {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 10px;
+  box-sizing: border-box;
+  flex: 1 1 600px;   
+  max-width: 280px;
+}
+
+#system-text {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-left: 0.6rem;
+}
+
+#doom {
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+  background-color: #00d4ff;
+  color: black;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+#doom:hover{
+  background-color: #005eff;
 }
 
 section#gpu{

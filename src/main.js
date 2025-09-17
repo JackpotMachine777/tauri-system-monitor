@@ -143,6 +143,16 @@ async function gpuStats() {
   mhzUsed.textContent = `Frequency: ${formatClocks(gpu.mhz_used, "gpu")} / ${formatClocks(gpu.mhz_total, "gpu")}`;
 }
 
+const doomBtn = document.querySelector("#doom");
+
+doomBtn.addEventListener("click", async () => {
+  try {
+    await invoke("open_doom_window");
+  } catch (err) {
+    console.error("Nie udało się otworzyć okna DOOM:", err);
+  }
+});
+
 setInterval(()=>{
   systemStats();
   gpuStats();
