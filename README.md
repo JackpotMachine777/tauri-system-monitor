@@ -14,7 +14,10 @@ Displays real-time info like CPU, RAM, GPU, disks, temperatures and network usag
 - 🌡️ Temperatures (if supported)
 - 🖥️ System informations
 - 🌐 Network stats (Download and upload)
-- 🔄 Auto-refresh every 1 second
+- ⚡ Process management
+  - View running processes (Name, PID, CPU Usage, memory)
+  - Kill process directly from the app
+- 🔄 Auto-refresh (CPU, RAM, GPU, network: 1s; processes: 3s)
 
 ---
 
