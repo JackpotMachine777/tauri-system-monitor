@@ -1,4 +1,3 @@
-// invoke() //
 const { invoke } = window.__TAURI__.core;
 
 // OS //
@@ -14,9 +13,28 @@ const kernelVersion = document.querySelector("#kernel-version");
 
 // CPU //
 const cpuName = document.querySelector("#cpu-name");
+const cpuThreads = document.querySelector("#cpu-threads");
+
 const cpuUsage = document.querySelector("#cpu-usage");
-const cpuTemp = document.querySelector("#cpu-temp");
+const usagePerThread = document.querySelector("#usage-per-thread");
+
 const cpuFreq = document.querySelector("#cpu-freq");
+const freqPerThread = document.querySelector("#freq-per-thread");
+
+const cpuTemp = document.querySelector("#cpu-temp");
+
+let usageVisible = false;
+let freqVisible = false;
+
+cpuUsage.addEventListener("click", () => {
+  usageVisible = !usageVisible;
+  usagePerThread.style.display = usageVisible ? "block" : "none";
+});
+
+cpuFreq.addEventListener("click", () => {
+  freqVisible = !freqVisible
+  freqPerThread.style.display = freqVisible ? "block" : "none";
+});
 
 // RAM //
 const totalRam = document.querySelector("#total-ram");
@@ -38,10 +56,17 @@ const networkName = document.querySelector("#network-name");
 const transmitted = document.querySelector("#transmitted");
 const received = document.querySelector("#received");
 
-function formatBytes(bytes){
+function formatInternet(bytes){
   if(bytes >= 1024 ** 3) return(`${(bytes / (1024**3)).toFixed(2)} GB/s`);
   else if(bytes >= 1024 ** 2) return(`${(bytes / (1024**2)).toFixed(2)} MB/s`);
   else return(`${(bytes / (1024)).toFixed(2)} KB/s`);
+}
+
+function formatBytes(bytes){
+  if(bytes >= 1024 ** 3) return(`${(bytes / (1024**3)).toFixed(2)} GB`);
+  else if(bytes >= 1024 ** 2) return(`${(bytes / (1024**2)).toFixed(2)} MB`);
+  else if(bytes >= 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+  else return `${bytes} B`;
 }
 
 function formatTime(seconds){
@@ -64,7 +89,6 @@ function formatClocks(mhz, type){
 // System stats function //
 async function systemStats() {
   const stats = await invoke('get_system_stats'); 
-
   // OS Stats //
   if(stats.os_name.includes("Arch")) {
     systemLogo.src = "/assets/arch.png";
@@ -99,9 +123,38 @@ async function systemStats() {
 
   // CPU Stats //
   cpuName.textContent = `Model: ${stats.cpu_brand}`;
+  cpuThreads.textContent = `Threads: ${stats.cpu_threads}`;
+
   cpuUsage.textContent = `Usage: ${stats.cpu_usage.toFixed(0)}%`;
-  cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
+  usagePerThread.innerHTML = "";
+  stats.usage_per_thread.forEach((t, index) => {
+    const div = document.createElement("div");
+    div.classList.add("thread-usage");
+
+    div.style.fontWeight = "600";
+    div.style.color = "#bb86fc";
+
+    div.textContent = `Thread ${index + 1}: ${t.toFixed(1)}%`
+    usagePerThread.appendChild(div);
+  });
+  usagePerThread.style.display = usageVisible ? "block" : "none";
+
   cpuFreq.textContent = `Frequency: ${formatClocks(stats.cpu_freq, "cpu")}`;
+
+  freqPerThread.innerHTML = "";
+  stats.freq_per_thread.forEach((f, index) => {
+    const div = document.createElement("div");
+    div.classList.add("thread-freq");
+
+    div.style.fontWeight = "600";
+    div.style.color = "#bb86fc";
+
+    div.textContent = `Thread ${index + 1}: ${formatClocks(f, "cpu")}`;
+    freqPerThread.appendChild(div);
+  });
+  freqPerThread.style.display = freqVisible ? "block" : "none";
+
+  cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
 
   // RAM Stats //
   totalRam.textContent = `Total: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
@@ -124,15 +177,14 @@ async function systemStats() {
 
   // Network Stats //
   networkName.textContent = `Name: ${stats.name}`;
-  transmitted.textContent = `Upload: ${formatBytes(stats.transmitted)}`;
-  received.textContent = `Download: ${formatBytes(stats.received)}`;
+  transmitted.textContent = `Upload: ${formatInternet(stats.transmitted)}`;
+  received.textContent = `Download: ${formatInternet(stats.received)}`;
 }
 
 // GPU Stats function //
 async function gpuStats() {
-  const gpu = await invoke('get_gpu_info'); 
+  const gpu = await invoke('get_gpu_info');
 
-  // GPU //
   gpuName.textContent = `Model: ${gpu.name}`;
   gpuTemp.textContent = `Temp: ${gpu.temp}°C`;
   gpuUsage.textContent = `Usage: ${gpu.usage}%`;
@@ -142,6 +194,45 @@ async function gpuStats() {
 
   mhzUsed.textContent = `Frequency: ${formatClocks(gpu.mhz_used, "gpu")} / ${formatClocks(gpu.mhz_total, "gpu")}`;
 }
+
+async function fetchProcesses(){
+  const processes = await invoke("get_processes");
+  const stats = await invoke('get_system_stats'); 
+
+  processes.sort((a, b) => b.proc_usage - a.proc_usage);
+
+  const tbody = document.querySelector("#process-table tbody");
+  tbody.innerHTML = "";
+  
+  processes.forEach(p => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style='text-align: center'>${p.pid}</td>
+      <td style='text-align: center'>${p.name}</td>
+      <td style='text-align: center'>${formatBytes(p.mem)}</td>
+      <td style='text-align: center'>${(p.proc_usage / stats.cpu_threads).toFixed(1)}</td>
+      <td><button class="kill-btn" data-pid="${p.pid}">Kill</button></td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+async function killProcess(pid){
+  try{
+    await invoke("process_kill", { pid });
+    alert(`Process ${pid} killed`);
+  } catch(err) {
+    alert(`Error: ${err}`);
+  }
+}
+
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("kill-btn")) {
+    e.stopPropagation();
+    const pid = parseInt(e.target.dataset.pid);
+    killProcess(pid);
+  }
+});
 
 const doomBtn = document.querySelector("#doom");
 
@@ -157,3 +248,5 @@ setInterval(()=>{
   systemStats();
   gpuStats();
 }, 1000);
+
+setInterval(() => fetchProcesses(), 3000);

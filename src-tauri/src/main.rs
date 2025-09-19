@@ -10,6 +10,10 @@ use sysinfo::{
     RefreshKind,
     CpuRefreshKind,
     Networks,
+    Pid,
+    ProcessesToUpdate,
+    ProcessRefreshKind,
+    Signal,
 };
 use tauri::{Manager, WebviewWindowBuilder, WebviewUrl};
 
@@ -17,6 +21,9 @@ use tauri::{Manager, WebviewWindowBuilder, WebviewUrl};
 #[derive(Serialize)]
 struct SystemStats {
     // CPU //
+    cpu_threads: u32,
+    freq_per_thread: Vec<u64>,
+    usage_per_thread: Vec<f32>,
     cpu_brand: Option<String>,
     cpu_usage: f32,
     cpu_temp: Option<f32>,
@@ -60,9 +67,9 @@ fn get_system_stats() -> SystemStats {
 
     // Components info: //
     let components = Components::new_with_refreshed_list();
-    // println!("{:#?}", components);
 
     // CPU Info: //
+    let cpu_threads = sys.cpus().len() as u32;
     let cpu_brand = sys.cpus()[0].brand().to_string();
     let cpu_usage = sys.global_cpu_usage();
     let cpu_temp = components
@@ -71,7 +78,9 @@ fn get_system_stats() -> SystemStats {
         .map(|c| c.temperature())
         .unwrap_or(Some(0.0));
     
-    let cpu_freq = sys.cpus()[0].frequency();
+    let cpu_freq = sys.cpus().iter().map(|c| c.frequency()).sum::<u64>() / sys.cpus().len() as u64;
+    let freq_per_thread: Vec<u64> = sys.cpus().iter().map(|c| c.frequency()).collect();
+    let usage_per_thread: Vec<f32> = sys.cpus().iter().map(|c| c.cpu_usage()).collect();
 
     // RAM Info: //
     let total_memory = sys.total_memory();
@@ -113,6 +122,9 @@ fn get_system_stats() -> SystemStats {
 
     // Pushing data into SystemStats structure //
     SystemStats {
+        cpu_threads,
+        freq_per_thread,
+        usage_per_thread,
         cpu_brand: Some(cpu_brand),
         cpu_usage,
         cpu_temp,
@@ -133,6 +145,61 @@ fn get_system_stats() -> SystemStats {
         name: name.to_string(),
         received,
         transmitted,
+    }
+}
+
+#[derive(Clone, Serialize)]
+struct ProcessInfo{
+    pid: u32,
+    name: String,
+    proc_usage: f32,
+    mem: u64,
+}
+
+#[tauri::command]
+fn get_processes() -> Vec<ProcessInfo> {
+    let mut system = System::new();
+    system.refresh_all();
+    std::thread::sleep(sysinfo::MINIMUM_CPU_UPDATE_INTERVAL);
+    system.refresh_processes_specifics(
+        ProcessesToUpdate::All,
+        true,
+        ProcessRefreshKind::everything(),
+    );
+    
+
+    let mut processes: Vec<_> = system.processes().values().map(|proc| {
+        let pid = proc.pid().as_u32();
+        let name = proc.name().to_string_lossy().into_owned();
+        let proc_usage = proc.cpu_usage();
+        let mem = proc.memory();
+
+        ProcessInfo {
+            pid,
+            name,
+            proc_usage,
+            mem
+        }
+    }).collect();
+
+    processes.sort_by(|a, b| b.proc_usage.partial_cmp(&a.proc_usage).unwrap());
+
+    processes
+}
+
+#[tauri::command]
+fn process_kill(pid: u32) -> Result<(), String> {
+    let mut sys = System::new_all();
+    sys.refresh_processes(ProcessesToUpdate::All, true);
+
+    if let Some(process) = sys.process(Pid::from_u32(pid)){
+        match process.kill_with(Signal::Kill){
+            Some(true) => Ok(()),
+            Some(false) => Err("Proces nie został ubity".into()),
+            None => Err("Nie udało się wysłać sygnału".into()),
+        }
+    } else {
+        Err(format!("Process {pid} not found"))
     }
 }
 
@@ -207,7 +274,7 @@ fn get_gpu_info() -> Option<GpuInfo> {
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info, open_doom_window])
+        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info, open_doom_window, get_processes, process_kill])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

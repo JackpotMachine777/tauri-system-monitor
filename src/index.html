@@ -29,9 +29,12 @@
     <section id="cpu">
       <h2>CPU</h2>
       <div id="cpu-name"></div>
+      <div id="cpu-threads"></div>
       <div id="cpu-usage"></div>
-      <div id="cpu-temp"></div>
+      <div id="usage-per-thread"></div>
       <div id="cpu-freq"></div>
+      <div id="freq-per-thread"></div>
+      <div id="cpu-temp"></div>
     </section>
 
     <!-- RAM -->
@@ -61,9 +64,23 @@
     </section>
     
     <!-- DISKS -->
-      <section id="disks">
-        <h2 id="disk-title">Disks</h2>
-        <div id="disks-wrapper"></div>
-      </section>
+    <section id="disks">
+      <h2 id="disk-title">Disks</h2>
+      <div id="disks-wrapper"></div>
+    </section>
+
+    <section id="processes">
+      <table id="process-table">
+        <thead>
+          <tr>
+            <th>PID</th>
+            <th>Name</th>
+            <th>Memory</th>
+            <th>CPU%</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
   </body>
 </html>

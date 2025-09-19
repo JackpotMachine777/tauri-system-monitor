@@ -1,4 +1,4 @@
-body {
+body{
   background-color: #121212;
   color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -9,14 +9,6 @@ body {
   gap: 20px;
   justify-content: center;
 }
-
-/* section#OS {
-  flex: 1 1 250px;
-  max-width: none;
-  flex-direction: row; 
-  gap: 1rem;
-  padding: 5px 5px;
-} */
 
 section#OS {
   display: flex;
@@ -110,8 +102,8 @@ section#disks .disk {
   background-color: #2a2a2a;
   border-radius: 6px;
   box-shadow: inset 0 0 5px rgb(255 255 255 / 0.1);
-  width: 250px;
-  height: 150px;
+  width: 200px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,9 +120,14 @@ h2 {
 }
 
 #cpu-usage, #cpu-temp, #cpu-freq, #gpu-usage, #gpu-temp, #vram-usage,
-#total-ram, #used-ram, #cpu-name, #gpu-name, #network-name, #gpu-power, #mhz-used, #transmitted, #received {
+#total-ram, #used-ram, #cpu-name, #gpu-name, #network-name, #gpu-power, 
+#mhz-used, #transmitted, #received, #cpu-threads {
   font-weight: 600;
   color: #bb86fc;
+}
+
+#cpu-usage, #cpu-freq{
+  cursor: pointer;
 }
 
 #hostname {
@@ -138,6 +135,29 @@ h2 {
   font-weight: 700;
   margin-bottom: 8px;
 }
+
+section#processes {
+  clear: both;
+  flex: 1 1 100%;
+  overflow-x: auto;
+  height: 200px;
+  max-width: 100%;
+}
+
+.kill-btn {
+  padding: 2px 6px;
+  background: #bb86fc;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.kill-btn.hidden {
+  display: none;
+}
+
 
 @media (max-width: 960px) {
   body {
