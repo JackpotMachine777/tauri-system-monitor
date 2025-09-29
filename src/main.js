@@ -160,11 +160,11 @@ async function systemStats() {
   cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
 
   // RAM Stats //
-  totalRam.textContent = `Total: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
-  usedRam.textContent = `Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
+  totalRam.textContent = `Total: ${formatBytes(stats.total_memory)}`;
+  usedRam.textContent = `Used: ${formatBytes(stats.used_memory)}`;
 
-  totalSwap.textContent = `Total SWAP: ${Math.round(stats.total_swap / 1024 / 1024)} MB`;
-  usedSwap.textContent = `Used SWAP: ${Math.round(stats.used_swap / 1024 / 1024)} MB`;
+  totalSwap.textContent = `Total SWAP: ${formatBytes(stats.total_swap)}`;
+  usedSwap.textContent = `Used SWAP: ${formatBytes(stats.used_swap)}`;
 
   // Disks Stats//
   diskContainer.innerHTML = "";
