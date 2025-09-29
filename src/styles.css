@@ -17,7 +17,7 @@ section#OS {
   padding: 10px;
   box-sizing: border-box;
   flex: 1 1 600px;   
-  max-width: 280px;
+  max-width: 300px;
 }
 
 #system-text {
@@ -44,11 +44,19 @@ section#OS {
   background-color: #005eff;
 }
 
+section#cpu{
+  flex: 1 1 90px;
+}
+
 section#gpu{
-  flex: 1 1 120px;
+  flex: 1 1 150px;
 }
 
 section#network{
+  flex: 1 1 90px;
+}
+
+section#ram{
   flex: 1 1 90px;
 }
 
