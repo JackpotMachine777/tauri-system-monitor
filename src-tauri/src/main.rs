@@ -31,6 +31,8 @@ struct SystemStats {
     // RAM //
     total_memory: u64,
     used_memory: u64,
+    total_swap: u64,
+    used_swap: u64,
     // OS //
     os_name: Option<String>,
     os_version: Option<String>,
@@ -86,6 +88,9 @@ fn get_system_stats() -> SystemStats {
     let total_memory = sys.total_memory();
     let used_memory = sys.used_memory();
 
+    let total_swap = sys.total_swap();
+    let used_swap = sys.used_swap(); 
+
     // OS Info: //
     let os_name = System::name();
     let os_version = System::os_version();
@@ -132,6 +137,8 @@ fn get_system_stats() -> SystemStats {
 
         total_memory,
         used_memory,
+        total_swap,
+        used_swap,
 
         os_name,
         os_version,

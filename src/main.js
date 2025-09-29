@@ -40,6 +40,9 @@ cpuFreq.addEventListener("click", () => {
 const totalRam = document.querySelector("#total-ram");
 const usedRam = document.querySelector("#used-ram");
 
+const totalSwap = document.querySelector("#total-swap");
+const usedSwap = document.querySelector("#used-swap");
+
 // GPU //
 const gpuName = document.querySelector("#gpu-name");
 const gpuTemp = document.querySelector("#gpu-temp");
@@ -159,6 +162,9 @@ async function systemStats() {
   // RAM Stats //
   totalRam.textContent = `Total: ${Math.round(stats.total_memory / 1024 / 1024)} MB`;
   usedRam.textContent = `Used: ${Math.round(stats.used_memory / 1024 / 1024)} MB`;
+
+  totalSwap.textContent = `Total SWAP: ${Math.round(stats.total_swap / 1024 / 1024)} MB`;
+  usedSwap.textContent = `Used SWAP: ${Math.round(stats.used_swap / 1024 / 1024)} MB`;
 
   // Disks Stats//
   diskContainer.innerHTML = "";

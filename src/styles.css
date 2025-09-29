@@ -48,6 +48,10 @@ section#gpu{
   flex: 1 1 120px;
 }
 
+section#network{
+  flex: 1 1 90px;
+}
+
 #system-text {
   display: flex; 
   flex-direction: column;
@@ -120,7 +124,7 @@ h2 {
 }
 
 #cpu-usage, #cpu-temp, #cpu-freq, #gpu-usage, #gpu-temp, #vram-usage,
-#total-ram, #used-ram, #cpu-name, #gpu-name, #network-name, #gpu-power, 
+#total-ram, #used-ram, #total-swap, #used-swap, #cpu-name, #gpu-name, #network-name, #gpu-power, 
 #mhz-used, #transmitted, #received, #cpu-threads {
   font-weight: 600;
   color: #bb86fc;

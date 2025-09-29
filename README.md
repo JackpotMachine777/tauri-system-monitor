@@ -10,6 +10,7 @@ Displays real-time info like CPU, RAM, GPU, disks, temperatures and network usag
 - 🧠 CPU usage + model
 - 🎮 GPU usage + model (Only NVIDIA for now)
 - 🧮 RAM (used / total)
+- ♻️ SWAP (used / total)
 - 💾 Disk space per partition
 - 🌡️ Temperatures (if supported)
 - 🖥️ System informations
