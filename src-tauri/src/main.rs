@@ -16,6 +16,7 @@ use sysinfo::{
     Signal,
 };
 use tauri::{Manager, WebviewWindowBuilder, WebviewUrl};
+use notify_rust::{Notification, Urgency};
 
 // System Data structure (from sysinfo) //
 #[derive(Serialize)]
@@ -278,10 +279,25 @@ fn get_gpu_info() -> Option<GpuInfo> {
     None
 }
 
+// Notifications //
+#[tauri::command]
+fn send_notification(title: &str, message: &str, urgent: bool) -> Result<(), String> {
+    let urgency = if urgent { Urgency::Critical } else { Urgency::Normal };
+
+    Notification::new()
+        .summary(title)
+        .body(message)
+        .urgency(urgency)
+        .show()
+        .map_err(|e| format!("An error occured while sending notification: {}", e))?;
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info, open_doom_window, get_processes, process_kill])
+        .invoke_handler(tauri::generate_handler![get_system_stats, get_gpu_info, open_doom_window, get_processes, process_kill, send_notification])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

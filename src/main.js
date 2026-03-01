@@ -1,4 +1,6 @@
 const { invoke } = window.__TAURI__.core;
+let cpuCrit = false;
+let gpuCrit = false;
 
 // OS //
 const systemLogo = document.querySelector("#system-logo");
@@ -157,7 +159,12 @@ async function systemStats() {
   });
   freqPerThread.style.display = freqVisible ? "block" : "none";
 
-  cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`
+  cpuTemp.textContent = `Temp: ${stats.cpu_temp.toFixed(0)}°C`;
+  
+  if(stats.cpu_temp.toFixed(0) > 85 && !cpuCrit){
+    notify("CAUTION!", "CPU Temperature is too high!", true);
+    cpuCrit = true;
+  } else if(stats.cpu_temp.toFixed(0) < 85) cpuCrit = false;
 
   // RAM Stats //
   totalRam.textContent = `Total: ${formatBytes(stats.total_memory)}`;
@@ -193,12 +200,18 @@ async function gpuStats() {
 
   gpuName.textContent = `Model: ${gpu.name}`;
   gpuTemp.textContent = `Temp: ${gpu.temp}°C`;
+
+  if(gpu.temp > 85 && !gpuCrit){
+    gpuCrit = true;
+    notify("CAUTION!", "GPU Temperature is too high!", true);
+  } else if(gpu.temp < 85) gpuCrit = false;
+
   gpuUsage.textContent = `Usage: ${gpu.usage}%`;
   gpuPower.textContent = `Power draw: ${(gpu.power_draw).toFixed(0)} W / ${gpu.power_limit} W`
 
   vramUsage.textContent = `VRAM Usage: ${gpu.memory_used} MB / ${gpu.memory_total} MB`;
 
-  mhzUsed.textContent = `Frequency: ${formatClocks(gpu.mhz_used, "gpu")} / ${formatClocks(gpu.mhz_total, "gpu")}`;
+  mhzUsed.textContent = `Frequency: ${formatClocks(gpu.mhz_used, "gpu")} / ${formatClocks(gpu.mhz_total, "gpu")}`;  
 }
 
 async function fetchProcesses(){
@@ -223,13 +236,20 @@ async function fetchProcesses(){
     tbody.appendChild(tr);
   });
 }
+
 async function killProcess(pid){
   try{
     await invoke("process_kill", { pid });
     alert(`Process ${pid} killed`);
-  } catch(err) {
-    alert(`Error: ${err}`);
-  }
+  } 
+  catch(err) { alert(`Error: ${err}`); }
+}
+
+async function notify(title, message, urgent = false){
+  try{
+    await invoke("send_notification", {title, message, urgent});
+  } 
+  catch(err) { console.error(`Error while sending notification: ${err}`); }
 }
 
 document.addEventListener("click", async (e) => {
@@ -246,7 +266,7 @@ doomBtn.addEventListener("click", async () => {
   try {
     await invoke("open_doom_window");
   } catch (err) {
-    console.error("Nie udało się otworzyć okna DOOM:", err);
+    console.error("Couldn't open DOOM window:", err);
   }
 });
 
